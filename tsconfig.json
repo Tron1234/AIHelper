@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "esnext",
+		"strict": true,
+		"jsx": "preserve",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"skipLibCheck": true,
+		"importHelpers": true,
+		"allowSyntheticDefaultImports": true,
+		"useDefineForClassFields": true,
+		"resolveJsonModule": true,
+		"types": ["@dcloudio/types"],
+		"lib": [
+			"esnext",
+			"dom"
+		]
+	},
+	"include": ["/**/*.ts", "/**/*.tsx", "/**/*.vue", "/typings/*.d.ts"],
+	"exclude": [
+		"node_modules",
+		"unpackage",
+		"/**/*.nvue"
+	]
+}
