@@ -49,11 +49,15 @@ if (uni.restoreGlobal) {
     __name: "index",
     setup(__props) {
       const recorded = vue.ref(false);
-      let deviceId;
       const recorderManager = uni.getRecorderManager();
       const innerAudioContext = uni.createInnerAudioContext();
       onLoad(() => {
-        deviceId = uni.getDeviceInfo().deviceId;
+        const {
+          deviceId,
+          deviceBrand,
+          deviceModel,
+          system
+        } = uni.getDeviceInfo();
         recorderManager.onStop(function(res) {
           uni.showLoading({});
           uni.uploadFile({
@@ -61,7 +65,10 @@ if (uni.restoreGlobal) {
             filePath: res.tempFilePath,
             name: "audio",
             formData: {
-              deviceId
+              deviceId,
+              deviceBrand,
+              deviceModel,
+              system
             },
             success: function(data) {
               uni.hideLoading();
@@ -117,13 +124,34 @@ if (uni.restoreGlobal) {
   __definePage("pages/index/index", PagesIndexIndex);
   const _sfc_main = {
     onLaunch: function() {
-      formatAppLog("log", "at App.vue:4", "App Launch");
+      const {
+        deviceId,
+        deviceBrand,
+        deviceModel,
+        system
+      } = uni.getDeviceInfo();
+      uni.request({
+        url: "http://81.71.149.135:3000/device/addDevice",
+        method: "POST",
+        data: {
+          deviceId,
+          deviceBrand,
+          deviceModel,
+          system
+        },
+        success: function(res) {
+          formatAppLog("log", "at App.vue:21", res);
+        },
+        fail: function(error) {
+          formatAppLog("log", "at App.vue:24", error);
+        }
+      });
     },
     onShow: function() {
-      formatAppLog("log", "at App.vue:7", "App Show");
+      formatAppLog("log", "at App.vue:29", "App Show");
     },
     onHide: function() {
-      formatAppLog("log", "at App.vue:10", "App Hide");
+      formatAppLog("log", "at App.vue:32", "App Hide");
     }
   };
   const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/\u8BFE\u4EF6/Vue\u5B66\u4E60/AIHelper/App.vue"]]);

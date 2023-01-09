@@ -29,7 +29,7 @@
 			deviceBrand,
 			deviceModel,
 			system
-		}: any = uni.getDeviceInfo()
+		} = uni.getDeviceInfo()
 		
 		recorderManager.onStop(function(res: RecorderObj) {
 			// loading
