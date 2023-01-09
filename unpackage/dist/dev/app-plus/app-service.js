@@ -31,6 +31,8 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
+  const _imports_0 = "/static/recording.svg";
+  const _imports_1 = "/static/record.svg";
   const ON_LOAD = "onLoad";
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
@@ -43,13 +45,10 @@ if (uni.restoreGlobal) {
     !vue.isInSSRComponentSetup && vue.injectHook(lifecycle, hook, target);
   };
   const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
-  const recording = "/static/recording.svg";
-  const record = "/static/record.svg";
   const _sfc_main$1 = /* @__PURE__ */ vue.defineComponent({
     __name: "index",
     setup(__props) {
       const recorded = vue.ref(false);
-      const pic = vue.computed(() => recorded.value ? recording : record);
       let deviceId;
       const recorderManager = uni.getRecorderManager();
       const innerAudioContext = uni.createInnerAudioContext();
@@ -60,14 +59,17 @@ if (uni.restoreGlobal) {
           uni.uploadFile({
             url: "http://81.71.149.135:3000/upload/audio",
             filePath: res.tempFilePath,
+            name: "audio",
             formData: {
               deviceId
             },
             success: function(data) {
-              formatAppLog("log", "at pages/index/index.vue:42", data);
               uni.hideLoading();
-              innerAudioContext.src = data;
+              innerAudioContext.src = JSON.parse(data.data).data;
               innerAudioContext.play();
+            },
+            fail: function() {
+              uni.hideLoading();
             }
           });
         });
@@ -75,24 +77,32 @@ if (uni.restoreGlobal) {
       function changeRecord(status) {
         recorded.value = status;
         if (status) {
-          innerAudioContext.stop();
-          innerAudioContext.onStop(() => {
-            recorderManager.start({
-              duration: 3e4
-            });
+          recorderManager.start({
+            duration: 3e4
           });
         } else {
           recorderManager.stop();
         }
       }
       return (_ctx, _cache) => {
-        return vue.openBlock(), vue.createElementBlock("image", {
+        return vue.openBlock(), vue.createElementBlock("view", {
           class: "record-icon",
-          src: vue.unref(pic),
-          mode: "widthFix",
           onTouchstart: _cache[0] || (_cache[0] = ($event) => changeRecord(true)),
           onTouchend: _cache[1] || (_cache[1] = ($event) => changeRecord(false))
-        }, null, 40, ["src"]);
+        }, [
+          vue.withDirectives(vue.createElementVNode("image", {
+            src: _imports_0,
+            mode: "widthFix"
+          }, null, 512), [
+            [vue.vShow, recorded.value]
+          ]),
+          vue.withDirectives(vue.createElementVNode("image", {
+            src: _imports_1,
+            mode: "widthFix"
+          }, null, 512), [
+            [vue.vShow, !recorded.value]
+          ])
+        ], 32);
       };
     }
   });
@@ -103,7 +113,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "/Users/brucewang/Work/AIHelper/AIHelper/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "D:/\u8BFE\u4EF6/Vue\u5B66\u4E60/AIHelper/pages/index/index.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
   const _sfc_main = {
     onLaunch: function() {
@@ -116,7 +126,7 @@ if (uni.restoreGlobal) {
       formatAppLog("log", "at App.vue:10", "App Hide");
     }
   };
-  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "/Users/brucewang/Work/AIHelper/AIHelper/App.vue"]]);
+  const App = /* @__PURE__ */ _export_sfc(_sfc_main, [["__file", "D:/\u8BFE\u4EF6/Vue\u5B66\u4E60/AIHelper/App.vue"]]);
   function createApp() {
     const app = vue.createVueApp(App);
     return {

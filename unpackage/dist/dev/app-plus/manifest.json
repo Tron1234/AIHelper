@@ -4,7 +4,7 @@
     "iPhone",
     "iPad"
   ],
-  "id": "",
+  "id": "__UNI__0C08135",
   "name": "AIHelper",
   "version": {
     "name": "1.0.0",
@@ -17,6 +17,7 @@
     "url": ""
   },
   "permissions": {
+    "Record": {},
     "UniNView": {
       "description": "UniNView原生渲染"
     }

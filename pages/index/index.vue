@@ -1,6 +1,8 @@
 <template>
-	<image class="record-icon" :src="pic" mode="widthFix" @touchstart="changeRecord(true)"
-		@touchend="changeRecord(false)" />
+	<view class="record-icon" @touchstart="changeRecord(true)" @touchend="changeRecord(false)">
+		<image v-show="recorded" src="@/static/recording.svg" mode="widthFix" />
+		<image v-show="!recorded" src="@/static/record.svg" mode="widthFix" />
+	</view>
 </template>
 
 <script lang="ts" setup>
@@ -12,10 +14,7 @@
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
-	import recording from '@/static/recording.svg'
-	import record from '@/static/record.svg'
 	const recorded: Ref = ref(false)
-	const pic = computed(() => recorded.value ? recording : record)
 	let deviceId: string
 	// 音频管理器
 	const recorderManager: any = uni.getRecorderManager()
@@ -35,15 +34,18 @@
 			uni.uploadFile({
 				url: 'http://81.71.149.135:3000/upload/audio',
 				filePath: res.tempFilePath,
+				name:'audio',
 				formData: {
 					deviceId
 				},
 				success: function(data) {
-					console.log(data)
 					uni.hideLoading()
 					// 请求完成后播放音频
-					innerAudioContext.src = data
+					innerAudioContext.src = JSON.parse(data.data).data
 					innerAudioContext.play()
+				},
+				fail:function(){
+					uni.hideLoading()
 				}
 			})
 		})
@@ -52,13 +54,14 @@
 	function changeRecord(status: boolean) {
 		recorded.value = status
 		if (status) {
-			innerAudioContext.stop()
-			innerAudioContext.onStop(() => {
-				// 开始录音(30秒自动停止)
-				recorderManager.start({
-					duration: 30000
-				})
+			recorderManager.start({
+				duration: 30000
 			})
+			// innerAudioContext.stop()
+			// innerAudioContext.onStop((e) => {
+			// 	// 开始录音(30秒自动停止)
+				
+			// })
 		} else {
 			// 停止录音
 			recorderManager.stop()
@@ -75,5 +78,9 @@
 		left: 0;
 		right: 0;
 		margin: 0 auto;
+		image{
+			width: 100%;
+			height: 100%;
+		}
 	}
 </style>
