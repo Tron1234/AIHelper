@@ -8,14 +8,12 @@
 <script lang="ts" setup>
 	import {
 		ref,
-		computed,
 		Ref
 	} from 'vue'
 	import {
 		onLoad
 	} from '@dcloudio/uni-app'
 	const recorded: Ref = ref(false)
-	let deviceId: string
 	// 音频管理器
 	const recorderManager: any = uni.getRecorderManager()
 	const innerAudioContext: any = uni.createInnerAudioContext()
@@ -23,10 +21,16 @@
 	interface RecorderObj {
 		tempFilePath: string
 	}
-
+	
 	onLoad(() => {
-		// 获取社保
-		deviceId = uni.getDeviceInfo().deviceId
+		// 获取设备
+		const {
+			deviceId,
+			deviceBrand,
+			deviceModel,
+			system
+		}: any = uni.getDeviceInfo()
+		
 		recorderManager.onStop(function(res: RecorderObj) {
 			// loading
 			uni.showLoading({})
@@ -36,8 +40,11 @@
 				filePath: res.tempFilePath,
 				name:'audio',
 				formData: {
-					deviceId
-				},
+					deviceId,
+					deviceBrand,
+					deviceModel,
+					system
+				}, 
 				success: function(data) {
 					uni.hideLoading()
 					// 请求完成后播放音频
