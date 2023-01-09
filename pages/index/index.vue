@@ -16,7 +16,6 @@
 	import record from '@/static/record.svg'
 	const recorded: Ref = ref(false)
 	const pic = computed(() => recorded.value ? recording : record)
-	let deviceId: string
 	// 音频管理器
 	const recorderManager: any = uni.getRecorderManager()
 	const innerAudioContext: any = uni.createInnerAudioContext()
@@ -24,10 +23,16 @@
 	interface RecorderObj {
 		tempFilePath: string
 	}
-
+	
 	onLoad(() => {
-		// 获取社保
-		deviceId = uni.getDeviceInfo().deviceId
+		// 获取设备
+		const {
+			deviceId,
+			deviceBrand,
+			deviceModel,
+			system
+		}: any = uni.getDeviceInfo()
+		
 		recorderManager.onStop(function(res: RecorderObj) {
 			// loading
 			uni.showLoading({})
@@ -36,10 +41,12 @@
 				url: 'http://81.71.149.135:3000/upload/audio',
 				filePath: res.tempFilePath,
 				formData: {
-					deviceId
-				},
+					deviceId,
+					deviceBrand,
+					deviceModel,
+					system
+				}, 
 				success: function(data) {
-					console.log(data)
 					uni.hideLoading()
 					// 请求完成后播放音频
 					innerAudioContext.src = data
